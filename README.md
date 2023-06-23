@@ -31,7 +31,7 @@ options:
 By default, you can make up to 60 unauthenticated requests per hour to the GitHub API. If you require a higher limit, you can use a token to increase it. 
 
 ```
-pullie.py --github-token GITHUB_TOKEN
+pullei.py --github-token GITHUB_TOKEN
 ```
 
 ## Note

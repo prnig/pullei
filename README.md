@@ -14,16 +14,18 @@ Pullei is an easy-to-use Python script that downloads the pull requests for nucl
 
 ## Usage
 ```python
-  ❯ python3 pullie.py -h
-  usage: pullie.py [-h] [--github-token GITHUB_TOKEN] [--filter-cves] [--download-directory DOWNLOAD_DIRECTORY]
+❯ python3 pullei.py -h
+usage: pullei.py [-h] [-c] [--github-token GITHUB_TOKEN] [--nuclei-templates-path NUCLEI_TEMPLATES_PATH] [--download-directory DOWNLOAD_DIRECTORY]
 
-    options:
-    -h, --help      Shows this help message and exit
-    --github-token GITHUB_TOKEN
-                    GitHub token to use.
-    --filter-cves         Show only CVEs
-    --download-directory DOWNLOAD_DIRECTORY
-                    Directory to download the templates to.
+options:
+  -h, --help            show this help message and exit
+  -c, --cves-only       Download only CVEs
+  --github-token GITHUB_TOKEN
+                        GitHub token to use.
+  --nuclei-templates-path NUCLEI_TEMPLATES_PATH
+                        Path to nuclei-templates directory if it doesn't exist in the root folder (~/nuclei-templates).
+  --download-directory DOWNLOAD_DIRECTORY
+                        Directory to manually download the templates to.
 ```
 
 By default, you can make up to 60 unauthenticated requests per hour to the GitHub API. If you require a higher limit, you can use a token to increase it. 

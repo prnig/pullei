@@ -9,7 +9,7 @@ Pullei is an easy-to-use Python script that downloads the newest pull requests f
 
 - The script won't add files that are already in the original nuclei-template folder. So, your existing legit templates won't break.
 
-- The script sets up a folder named "pullei" inside the ~/nuclei-templates directory by default. This helps keep everything organized and separate from the original templates. So, you can manage your templates easly.
+- The script sets up a folder named "pullei" inside the ~/nuclei-templates directory by default. This helps keep everything organized and separate from the original templates. So, you can manage your templates easily.
 
 ## Usage
 ```python

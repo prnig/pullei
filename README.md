@@ -33,3 +33,6 @@ pullie.py --github-token GITHUB_TOKEN
 
 ## Note
 Please be aware that all the downloaded templates were created by users and have not been validated by Project Discovery yet. As a result, there is a possibility that some templates may not work as expected.
+
+### Disclaimer 
+This repository was inspired by [newclei](https://github.com/tr3ss/newclei), a tool authored by tr3ss.

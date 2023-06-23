@@ -1,8 +1,9 @@
-# pullei
+<img width="933" alt="image" src="https://github.com/prnig/pullei/assets/73889216/4545503b-7df3-4b2d-94f4-238b7d051caa"># pullei
 Pullei is an easy-to-use Python script that downloads the pull requests for nuclei templates from projectdiscovery/nuclei-templates repo. It helps you stay updated with the latest templates not found in the existing collection.
 
 
-<img width="791" alt="image" src="https://github.com/prnig/pullei/assets/73889216/dd1e6468-5df3-4127-bb4c-d4288ea87127">
+<img width="933" alt="image" src="https://github.com/prnig/pullei/assets/73889216/d61f840d-5313-434e-ad2d-aee5e184d1d1">
+
 
 
 ## Features

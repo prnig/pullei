@@ -1,7 +1,6 @@
 import requests
 import argparse
 import os
-import json
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import unquote
 
@@ -30,7 +29,7 @@ def fetch_pull_requests(github_token):
     return pull_requests
 
 
-def fetch_files(pull_request_number, github_token, filter_cves):
+def fetch_files(pull_request_number, github_token):
     github_files_url = f"https://api.github.com/repos/projectdiscovery/nuclei-templates/pulls/{pull_request_number}/files"
     request_headers = {"Host": "api.github.com"}
     if github_token:
@@ -39,12 +38,7 @@ def fetch_files(pull_request_number, github_token, filter_cves):
     response = requests.get(github_files_url, headers=request_headers)
     response.raise_for_status()
 
-    files_data = response.json()
-
-    if filter_cves:
-        return [file_entry["raw_url"] for file_entry in files_data if "cves" in file_entry["filename"]]
-    else:
-        return [file_entry["raw_url"] for file_entry in files_data]
+    return [file_entry["raw_url"] for file_entry in response.json()]
 
 
 def file_exists_in_directory(file_name, directory):
@@ -54,16 +48,27 @@ def file_exists_in_directory(file_name, directory):
     return False
 
 
-def download_file(url, download_directory):
+def download_file(url, nuclei_templates_dir, cves_only, download_directory):
     decoded_url = unquote(url)
     file_name = os.path.basename(decoded_url)
     
-    nuclei_templates_dir = os.path.expanduser("~/nuclei-templates")
-    if file_exists_in_directory(file_name, nuclei_templates_dir) or file_exists_in_directory(file_name, download_directory):
+    download_path = os.path.join(download_directory, "pullei")
+    if "cves" in url:
+        download_path = os.path.join(download_path, "cves")
+    else:
+        download_path = os.path.join(download_path, "other")
+    
+    if not os.path.exists(download_path):
+        os.makedirs(download_path)
+
+    if cves_only and "cves" not in url:
+        return
+
+    if file_exists_in_directory(file_name, nuclei_templates_dir) or file_exists_in_directory(file_name, download_path):
         print(f"\033[93mFile {file_name} already exists. Skipping download.\033[0m")
         return
     
-    file_path = os.path.join(download_directory, file_name)
+    file_path = os.path.join(download_path, file_name)
     response = requests.get(url)
     with open(file_path, 'wb') as f:
         f.write(response.content)
@@ -72,23 +77,18 @@ def download_file(url, download_directory):
 
 def execute_script():
     parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--cves-only", action="store_true", help="Download only CVEs")
     parser.add_argument("--github-token", help="GitHub token to use.")
-    parser.add_argument("--filter-cves", action="store_true", help="Show only CVEs")
-    parser.add_argument("--download-directory", default=os.path.expanduser("~/nuclei-templates/pullei"), help="Directory to download the templates to.")
+    parser.add_argument("--nuclei-templates-path", default=os.path.expanduser("~/nuclei-templates"), help="Path to nuclei-templates directory if it doesn't exist in the root folder (~/nuclei-templates).")
+    parser.add_argument("--download-directory", default=os.path.expanduser("~/nuclei-templates"), help="Directory to manually download the templates to.")
     script_args = parser.parse_args()
-
-    if not os.path.exists(script_args.download_directory):
-        os.makedirs(script_args.download_directory)
 
     pull_request_numbers = fetch_pull_requests(script_args.github_token)
 
-    def process_pull_request(pull_request_number):
-        file_urls = fetch_files(pull_request_number, script_args.github_token, script_args.filter_cves)
+    for pull_request_number in pull_request_numbers:
+        file_urls = fetch_files(pull_request_number, script_args.github_token)
         for url in file_urls:
-            download_file(url, script_args.download_directory)
-
-    with ThreadPoolExecutor() as executor:
-        executor.map(process_pull_request, pull_request_numbers)
+            download_file(url, script_args.nuclei_templates_path, script_args.cves_only, script_args.download_directory)
 
 
 if __name__ == "__main__":
